@@ -42,7 +42,7 @@ label2.grid(row=2, column=0, padx=10, pady=5)
 chosen_option = StringVar()
 
 # Create a list of items for the Option Menu
-options = ['Vanilla', 'Strawberry', 'Chocolate']
+options = ["I'm free","I'm almost "]
 
 # Create the option menu and place in row 3, column 0
 option_menu = ttk.OptionMenu(frame2, chosen_option, options[0], *options)
