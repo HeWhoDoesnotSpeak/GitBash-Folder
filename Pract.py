@@ -12,11 +12,11 @@ def check():
   
 
 # Create a window
-root = Tk()
-root.title("My GUI App")
+win = Tk()
+win.title("My GUI App")
 
 # Create a frame for first 2 widgets
-frame1 = ttk.Frame(root)
+frame1 = ttk.Frame(win)
 frame1.grid(row=0, column=0)
 
 # Create a label and add it to the window using pack()
@@ -31,7 +31,7 @@ words_entry = ttk.Entry(frame1, textvariable=words)
 words_entry.grid(row=1, column=0, padx=10, pady=5)
 
 # Create a frame for the second 2 widgets
-frame2 = ttk.Frame(root)
+frame2 = ttk.Frame(win)
 frame2.grid(row=1, column=0)
 
 # Create a second label with longer text and add it to the window using pack()
@@ -49,7 +49,7 @@ option_menu = ttk.OptionMenu(frame2, chosen_option, options[0], *options)
 option_menu.grid(row=3, column=0, padx=10, pady=5)
 
 # Create a LabelFrame for the checkbuttons
-frame3 = ttk.LabelFrame(root, text="Checkbuttons")
+frame3 = ttk.LabelFrame(win, text="Checkbuttons")
 frame3.grid(row=2, column=0, padx=10, pady=10, sticky="WE")
 
 # Create variables for 2 checkbuttons
@@ -65,11 +65,11 @@ check2 = ttk.Checkbutton(frame3, text="Option 1", variable=check2_var, state="di
 check2.grid(row=1, column=0)
 
 # Create a LabelFrame for the radiobuttons
-frame4 = ttk.LabelFrame(root, text="Radiobuttons")
+frame4 = ttk.LabelFrame(win, text="Radiobuttons")
 frame4.grid(row=3, column=0, padx=10, pady=10, sticky="WE")
 
 #Create 3 radiobuttons
 
 
 # Run the main window loop
-root.mainloop()
+win.mainloop()

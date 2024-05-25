@@ -2,75 +2,60 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import Radiobutton
 import subprocess
+from tkinter import messagebox
+from PIL import Image
+from PIL import ImageTk
 
 # Create a window
-root = Tk()
-root.geometry
+win = Tk()
+win.geometry("250x100")
 
-# Checkbutton function
-def check():
-  print(check1_var.get())
+#Login details
+global e1
+global e2
 
-#Page Hopping
-# Create function that allows for where user clicks to put into the subprocess
+# Page Hopping: Creates a function that allows for where user clicks to put into the subprocess
 def pageHop():
   print("Welcome to your selected page")
-  root.destroy()
-  subprocess[("python","")]
-
-
-# Radiobutton function
+  win.destroy()
+  subprocess[("python","GitBash Folder//"+chosen_option+".py")]
   
 
-# Create a frame for first 2 widgets
-frame1 = ttk.Frame(root)
-frame1.grid(row=1, column=0)
+# Creating frames 
+topFrame = ttk.Frame(win)
+topFrame.grid()
+frame2 = ttk.Frame(win)
+frame2.grid()
 
-#Create a StringVar() to store text
+
+# Create a StringVar() to store text
 words = StringVar()
 
-title=Label(root, text="KNOWLED")
-title.grid(row=0,column=1, sticky="NSEW")
-text=Label(root, text="I hate working on design with pixels, this will take a while to put into place")
-text.grid(row=4,column=1, sticky="NSEW")
+#Top Frame
+userInfo=Label(topFrame, text="User Info", font=(20))
+userInfo.grid(row=0,column=0, sticky="E")
 
-# Create a text entry field
-words_entry = ttk.Entry(frame1, textvariable=words)
-words_entry.grid(row=2, column=1, padx=10, pady=5, sticky="NSEW")
-
-# Create a frame for the second 2 widgets
-frame2 = ttk.Frame(root,)
-frame2.grid(row=2, column=1, sticky="NSEW")
-
-# Create a second label with longer text and add it to the window using pack()
-label2 = ttk.Label(frame2, textvariable=words, wraplength=150)
-label2.grid(row=2, column=1, padx=10, pady=5)
+#Image/Logo
+image=Image.open(r"C:\Users\64223\OneDrive\Pictures\DDT logo.png")
+img=image.resize((30,30))
+imgtk=ImageTk.PhotoImage(img)
+img1=Label(win, image=imgtk)
+img1.grid(row=0, column=1, sticky="W")
 
 # Create a StringVar() for the chosen option
 chosen_option = StringVar()
 
-# Create a list of items for the Option Menu
-options = ["Topics","English","Mathematic","Science","Social Studies","ETC"]
+# Create a list of items for topics
+topics = ["Topics","English","Mathematic","Science","Social Studies","ETC"]
 
-# Create the option menu and place in row 3, column 0
-option_menu = ttk.OptionMenu(frame2, chosen_option, options[0], *options)
-option_menu.grid(row=2, column=1, padx=0, pady=5,sticky="W")
+# Option menu for topics
+option_menu = ttk.OptionMenu(frame2, chosen_option, topics[0], *topics)
+option_menu.grid(row=0, column=0, padx=0, pady=0,sticky="E")
 
-# Create a LabelFrame for the checkbuttons
-frame3 = ttk.LabelFrame(root, text="Checkbuttons")
-frame3.grid(row=3, column=1, padx=10, pady=10, sticky="EW")
-
-# Create variables for 2 checkbuttons
-check1_var = IntVar()
-check2_var = IntVar()
-check2_var.set(1)
-
-# Create a LabelFrame for the radiobuttons
-frame4 = ttk.LabelFrame(root, text="Radiobuttons")
-frame4.grid(row=3, column=0, padx=10, pady=10, sticky="WE")
-
-#Create 3 radiobuttons
+# Search Bar
+searchBar = ttk.Entry(frame2, textvariable=words)
+searchBar.grid(row=0, column=1, padx=5, pady=5, sticky="NW")
 
 
 # Run the main window loop
-root.mainloop()
+win.mainloop()
