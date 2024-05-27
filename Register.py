@@ -1,60 +1,53 @@
+# Register.py
 from tkinter import *
-import subprocess
-from tkinter import ttk
 from tkinter import messagebox
-import sqlite3
-import os
-
-
-os.system('clear')
-connection = sqlite3.connect("login_details.db")
-cursor = connection.cursor()
-
-def dbLogin():
-    create = """CREATE TABLE IF NOT EXISTS login_details (UserName text, Password text,  Email text)"""
-    cursor.execute(create)
-    print("Login Details \n")
-    cursor.execute("SELECT * FROM login_details")
-    connection.commit()
-    results = cursor.fetchall()
-    print(results)
-    print("")
-    cursor.execute("SELECT Password FROM login_details")
-    connection.commit()
-    results = cursor.fetchall()
-    print(results)
-    
-dbLogin()
+import database
 
 def register():
-    messagebox.showinfo("","Thank you for registering")
-    win.destroy()
-    subprocess.run(["python", "GitBash Folder//FrontPage.py"])
+    username = un.get()
+    password = pw.get()
+    email = email_entry.get()
+    if not username or not password or not email:
+        print("All fields are required.")
+        return
+    # Ensure the table exists
+    database.createTable()
+    # Inserts user details
+    database.insertUser(username, password, email)
+    print(f"User {username} registered successfully!")
     
-     
-win = Tk()
-win.title("Register")
-win.geometry("300x200")
-       
-Label(win, text="UserName").place(x=10, y=10)
-Label(win, text="Password").place(x=10, y=40)
-un =Entry()
-pw =Entry()
+    #Boolean check to see if the user has inputed their details and if not then the error would pop up
+    if username and password and email:
+        messagebox.showinfo("Registration", "Thank you for registering")
+        win.destroy()
+        frontPage()
+    else:
+        messagebox.showwarning("Input Error", "All fields are required")
 
-def text():
-      un = Entry(win)
-      un.place(x=140, y=10)
-      pw = Entry(win)
-      pw.place(x=140, y=40)
+def frontPage():
+    import frontPage
+    frontPage.show()
 
-text()
+def show():
+    global win, un, pw, email_entry
+    win = Tk()
+    win.title("Register")
+    win.geometry("300x200")
 
+    Label(win, text="UserName").place(x=10, y=10)
+    Label(win, text="Password").place(x=10, y=40)
+    Label(win, text="Email").place(x=10, y=70)
 
-entry=("UPDATE login_details SET UserName = %s, SET PASSWORD = %s WHERE id=%s") 
-val= (un,pw,id)
+    un = Entry(win)
+    un.place(x=140, y=10)
+    pw = Entry(win)
+    pw.place(x=140, y=40)
+    email_entry = Entry(win)
+    email_entry.place(x=140, y=70)
 
-cursor.execute(entry,val)
+    Button(win, text="Register", command=register,height=3, width=20).place(x=10, y=120)
 
-Button(win, text="Register", command=register, height=3, width=20).place(x=10,y=120)  
-cursor.close()
-win.mainloop()
+    win.mainloop()
+
+if __name__ == "__main__":
+    show()
