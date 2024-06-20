@@ -3,6 +3,7 @@ from tkinter import ttk
 import subprocess
 from tkinter import messagebox
 from PIL import Image, ImageTk
+import database
 
 # Function to handle page hopping
 def pageHop():
@@ -46,8 +47,9 @@ except FileNotFoundError:
     imgLabel.grid(row=0, column=0, padx=(0, 10), pady=10)
 
 # User Info Label
-userInfo = Label(topFrame, text="User Info", font=("Arial", 16))
-userInfo.grid(row=0, column=1, padx=10, pady=10, sticky="W")
+getUser()
+userInfo = Label(topFrame, text=f"{user[0]}", font=("Arial", 16))
+userInfo.grid(row=0, column=1, padx=10, pady=10, sticky="E")
 
 # Create a StringVar for the chosen option
 chosenOption = StringVar()

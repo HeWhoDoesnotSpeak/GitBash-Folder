@@ -1,6 +1,6 @@
 import sqlite3
 
-#Calls the connection to be made the two
+#Calls the connection to be made between the database and folder
 def getConnection():
     connection = sqlite3.connect("GitBash Folder//loginDetails.db")
     return connection
