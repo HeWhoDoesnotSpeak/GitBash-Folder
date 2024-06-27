@@ -5,7 +5,21 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import database
 
-# Function to handle page hopping
+# Creating a window
+win = Tk()
+win.title("Home Page")
+win.geometry("1000x1000")
+
+# Define styles
+style = ttk.Style()
+style.configure("tFrame", background="white")
+style.configure("tButton", padding=6)
+style.configure("tLabel", padding=6)
+
+# Create a list of items for topics
+topics = ["Topics", "English", "Mathematic", "Science", "Social Studies", "ETC"]
+
+# Creating a method of transporting pages
 def pageHop():
     selectedPage = chosenOption.get()
     if selectedPage == "Topics":
@@ -20,55 +34,70 @@ def pageHop():
     except subprocess.CalledProcessError as e:
         messagebox.showerror("Error", f"Failed to open {selectedPage}.py")
 
-# Creating a window
-win = Tk()
-win.title("User Info")
-win.geometry("400x200")
+# Creating frames (Important)
+userInfoFrame = ttk.Frame(win,width=200, height=100, relief="solid", padding=10)
+userInfoFrame.grid(row=0,column=0,padx=10,pady=10,sticky="nsew")
 
-# Creating frames 
-topFrame = ttk.Frame(win, padding="10")
-topFrame.grid(row=0, column=0, sticky="EW")
-frame2 = ttk.Frame(win, padding="10")
-frame2.grid(row=1, column=0, sticky="EW")
+logoFrame = ttk.Frame(win,width=200, height=100, relief="solid", padding=10)
+logoFrame.grid(row=0,column=1,padx=10,pady=10,sticky="nsew")
 
-# Adding padding to the main window
-win.grid_rowconfigure(0, weight=1)
-win.grid_columnconfigure(0, weight=1)
+topicsFrame = ttk.Frame(win,width=200, height=100, relief="solid", padding=10)
+topicsFrame.grid(row=1,column=0,padx=10,pady=10,sticky="nsew")
+
+topicsDropdownFrame = ttk.Frame(win, width=200, height=50, relief="solid", padding=10)
+topicsDropdownFrame.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+
+searchBarFrame = ttk.Frame(win,width=200, height=100, relief="solid", padding=10)
+searchBarFrame.grid(row=1,column=1,padx=10,pady=10,sticky="nsew")
+
+historyFrame = ttk.Frame(win,width=200, height=100, relief="solid", padding=10)
+historyFrame.grid(row=2,column=1,padx=10,pady=10,sticky="nsew")
+
+dpFrame = ttk.Frame(win,width=200, height=100, relief="solid", padding=10)
+dpFrame.grid(row=3,column=0,padx=10,pady=10,sticky="nsew")
+videoFrame = ttk.Frame(win,width=200, height=100, relief="solid", padding=10)
+videoFrame.grid(row=4,column=1,padx=10,pady=10,sticky="nsew")
+
+# Widgets for frames
+userInfoButton = ttk.Button(userInfoFrame, text="User Info")
+userInfoButton.pack(expand=True)
+
+logoImage = Label(logoFrame, text="Image")
+
+topicsLabel = ttk.Label(topicsDropdownFrame, text="Topics")
+topicsLabel.pack(side="left")
+
+topicsCombo = ttk.Combobox(topicsDropdownFrame, values=topics)
+topicsCombo.pack(side="left", expand=True)
 
 # Image/Logo
-try:
-    image = Image.open(r"C:\Users\64223\OneDrive\Pictures\DDT logo.png")
-    img = image.resize((50, 50))
-    imgTk = ImageTk.PhotoImage(img)
-    imgLabel = Label(topFrame, image=imgTk)
-    imgLabel.grid(row=0, column=0, padx=(0, 10), pady=10)
-except FileNotFoundError:
-    imgLabel = Label(topFrame, text="Logo not found")
-    imgLabel.grid(row=0, column=0, padx=(0, 10), pady=10)
-
-# User Info Label
-getUser()
-userInfo = Label(topFrame, text=f"{user[0]}", font=("Arial", 16))
-userInfo.grid(row=0, column=1, padx=10, pady=10, sticky="E")
+def Logo():
+    try:
+        image = Image.open(r"C:\Users\64223\OneDrive\Pictures\DDT logo.png")
+        img = image.resize((50, 50))
+        imgTk = ImageTk.PhotoImage(img)
+        imgLabel = Label(logoFrame, image=imgTk)
+        imgLabel.grid(row=0, column=2, padx=(0, 10), pady=10, sticky='w'+'e'+'s'+'n')
+    except FileNotFoundError:
+        imgLabel = Label(logoFrame, text="Logo not found")
+        imgLabel.grid(row=0, column=2, padx=(0, 10), pady=10)
 
 # Create a StringVar for the chosen option
 chosenOption = StringVar()
 chosenOption.set("Topics")
 
-# Create a list of items for topics
-topics = ["Topics", "English", "Mathematic", "Science", "Social Studies", "ETC"]
-
 # Option menu for topics
-optionMenu = ttk.OptionMenu(frame2, chosenOption, *topics)
+optionMenu = ttk.OptionMenu(topicsFrame, chosenOption, *topics)
 optionMenu.grid(row=0, column=0, padx=10, pady=10, sticky="W")
 
 # Search Bar
-searchBar = ttk.Entry(frame2, width=30)
+searchBar = ttk.Entry(searchBarFrame, width=30)
 searchBar.grid(row=0, column=1, padx=10, pady=10, sticky="W")
 
 # Search Button
-searchButton = ttk.Button(frame2, text="Search", command=pageHop)
+searchButton = ttk.Button(searchBarFrame, text="Search", command=pageHop)
 searchButton.grid(row=0, column=2, padx=10, pady=10, sticky="W")
 
 # Run the main window loop
-win.mainloop()
+if __name__ == "__main__":
+    win.mainloop()

@@ -20,13 +20,13 @@ def register():
     if username and password and email:
         messagebox.showinfo("Registration", "Thank you for registering")
         win.destroy()
-        frontPage()
+        loginPage()
     else:
         messagebox.showwarning("Input Error", "All fields are required")
 
-def frontPage():
-    import frontPage
-    frontPage.show()
+def loginPage():
+    import loginPage
+    loginPage.show()
 
 def show():
     global win, un, pw, email_entry

@@ -29,3 +29,8 @@ def getUser(username):
     user = cursor.fetchone()
     connection.close()
     return user
+
+#Getting all user to check
+def getAllUsers(self):
+        self.cursor.execute('SELECT username FROM users')
+        return self.cursor.fetchall()

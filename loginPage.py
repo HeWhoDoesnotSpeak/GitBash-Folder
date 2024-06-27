@@ -1,11 +1,17 @@
-# FrontPage.py
+# loginPage.py
 from tkinter import *
 from tkinter import messagebox
 import database
+from homePage import *
 
+#The function for login page
 def login():
     username = un.get()
     password = pw.get()
+
+    if not username or not password:
+        messagebox.showerror("Login Error", "No Blank allowed")
+        return
 
     user = database.getUser(username)
     if user:
@@ -16,16 +22,22 @@ def login():
         else:
             messagebox.showerror("Login Error", "Incorrect Password")
     else:
-        messagebox.showerror("Login Error", "Username not found")
+        # Checks if the username exists in the database
+        all_users = database.getAllUsers()
+        if username not in [user[0] for user in all_users]:
+            messagebox.showerror("Login Error", "Username not found")
+        else:
+            messagebox.showerror("Login Error", "Incorrect Username and Password")
 
+#Page hopping stuff
 def homePage():
     import homePage
     homePage.show()
 def register():
     win.destroy()
-    import Register
-    Register.show()
-    
+    import register
+    register.show()
+
 def show():
     global win, un, pw
     win = Tk()
@@ -42,7 +54,7 @@ def show():
     pw.config(show="*")
 
     Button(win, text="Login", command=login, height=3, width=20).place(x=10, y=80)
-    Button(win, text="Register", command=register, height=3, width=20).place(x=10, y=120)
+    Button(win, text="register", command=register, height=3, width=20).place(x=10, y=120)
 
     win.mainloop()
 
