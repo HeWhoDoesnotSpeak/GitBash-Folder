@@ -1,36 +1,161 @@
 import sqlite3
+from tkinter import messagebox
 
-#Calls the connection to be made between the database and folder
+# Establishes a connection to the SQLite database
 def getConnection():
-    connection = sqlite3.connect("GitBash Folder//loginDetails.db")
-    return connection
+    try:
+        return sqlite3.connect("C://Users//64223/CPS//GitBash Folder//mainDB.db")
+    except sqlite3.Error as e:
+        print(f"An error occurred while connecting to the database: {e}")
+        return None
 
-#Creates the table if not already existing
-def createTable():
+def checkConnection(printFunction, messageFunction, printText, messageText):
     connection = getConnection()
-    cursor = connection.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS loginDetails (UserName text, Password text, Email text)""")
-    connection.commit()
-    connection.close()
+    if connection is None:
+        printFunction(printText)
+        messageFunction(messageText)
+        return
 
-# Inserts user's details into the database to be saved
+# Creates the necessary tables if they don't already exist
+def createTables():
+    connection = getConnection()
+    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    try:
+        cursor = connection.cursor()
+        cursor.execute("CREATE TABLE IF NOT EXISTS users (UserName TEXT PRIMARY KEY, Password TEXT, Email TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS articles (title TEXT PRIMARY KEY, content TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS history (number INTEGER PRIMARY KEY, question TEXT)")
+        connection.commit()
+    except sqlite3.Error as e:
+        print(f"An error occurred while creating tables: {e}")
+        messagebox.showerror("An error occured while creating tables.")
+
+# Inserts a new user into the database
 def insertUser(username, password, email):
     connection = getConnection()
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO loginDetails (UserName, Password, Email) VALUES (?, ?, ?)", (username, password, email))
-    connection.commit()
-    connection.close()
+    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    try:
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO users (UserName, Password, Email) VALUES (?, ?, ?)", (username, password, email))
+        connection.commit()
+    except sqlite3.IntegrityError:
+        print(f"User with username '{username}' already exists.")
+    except sqlite3.Error as e:
+        print(f"An error occurred while inserting the user: {e}")
+    finally:
+        connection.close()
 
-# Collects the user's username
+# Retrieves a user by their username
 def getUser(username):
     connection = getConnection()
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM loginDetails WHERE UserName=?", (username,))
-    user = cursor.fetchone()
-    connection.close()
-    return user
+    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE UserName=?", (username,))
+        return cursor.fetchone()
+    except sqlite3.Error as e:
+        print(f"An error occurred while retrieving the user: {e}")
+    finally:
+        connection.close()
 
-#Getting all user to check
-def getAllUsers(self):
-        self.cursor.execute('SELECT username FROM users')
-        return self.cursor.fetchall()
+# Retrieves all users from the database
+def getAllUsers():
+    connection = getConnection()
+    if connection is None:
+        print("Failed to connect to the database.")
+        return []
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT UserName FROM users")
+        return cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"An error occurred while retrieving users: {e}")
+    finally:
+        connection.close()
+
+# Checks if a user exists by username by search the database with all usernames
+def checkUserExists(username):
+    connection = getConnection()
+    if connection is None:
+        print("Failed to connect to the database.")
+        return False
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT UserName FROM users WHERE UserName=?", (username,))
+        return cursor.fetchone() is not None
+    except sqlite3.Error as e:
+        print(f"An error occurred while checking if the user exists: {e}")
+    finally:
+        connection.close()
+
+# Inserts an article into the database
+def saveArticle(title, content):
+    connection = getConnection()
+    checkConnection(print, messagebox.showerror, "Failed to connect to database","Failed to connect to the database")
+    try:
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO articles (title, content) VALUES (?, ?)", (title, content))
+        connection.commit()
+    except sqlite3.IntegrityError:
+        print(f"Article with title '{title}' already exists.")
+    except sqlite3.Error as e:
+        print(f"An error occurred while saving the article: {e}")
+    finally:
+        connection.close()
+
+# Retrieves all articles from the database
+def getAllArticles():
+    connection = getConnection()
+    if connection is None:
+        print("Failed to connect to the database.")
+        return []
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT title, content FROM articles")
+        return cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"An error occurred while retrieving articles: {e}")
+    finally:
+        connection.close()
+
+def updateArticle(title, newContent):
+    connection = getConnection()
+    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    try:
+        cursor = connection.cursor()
+        cursor.execute("UPDATE articles SET content=? WHERE title=?", (newContent, title))
+        connection.commit()
+    except sqlite3.Error as e:
+        print(f"An error occurred while updating the article: {e}")
+    finally:
+        connection.close()
+
+def saveSearchHistory(question):
+    connection = getConnection()
+    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    try:
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO history (question) VALUES (?)", (question,))
+        connection.commit()
+    except sqlite3.Error as e:
+        print(f"An error occured while tring to save the search history: {e}")
+    finally:
+        connection.close()
+
+def getSearchHistory():
+    connection = getConnection()
+    if connection is None:
+        print("Failed to connect to the database.")
+        return []
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM history ORDER BY number DESC")
+        return cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"An error occurred while retrieving the search history: {e}")
+        return []
+    finally:
+        connection.close()
+
+
+

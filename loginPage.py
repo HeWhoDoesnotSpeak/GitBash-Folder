@@ -1,16 +1,15 @@
-# loginPage.py
 from tkinter import *
 from tkinter import messagebox
 import database
 from homePage import *
 
-#The function for login page
+# The function for login page
 def login():
     username = un.get()
     password = pw.get()
 
     if not username or not password:
-        messagebox.showerror("Login Error", "No Blank allowed")
+        messagebox.showerror("Login Error", "No blanks allowed")
         return
 
     user = database.getUser(username)
@@ -22,17 +21,17 @@ def login():
         else:
             messagebox.showerror("Login Error", "Incorrect Password")
     else:
-        # Checks if the username exists in the database
-        all_users = database.getAllUsers()
-        if username not in [user[0] for user in all_users]:
+        allUsers = database.getAllUsers()
+        if username not in [user[0] for user in allUsers]:
             messagebox.showerror("Login Error", "Username not found")
         else:
             messagebox.showerror("Login Error", "Incorrect Username and Password")
 
-#Page hopping stuff
+# Page hopping stuff
 def homePage():
     import homePage
     homePage.show()
+
 def register():
     win.destroy()
     import register
@@ -42,19 +41,20 @@ def show():
     global win, un, pw
     win = Tk()
     win.title("Login")
-    win.geometry("300x200")
+    win.geometry("400x400")
 
-    Label(win, text="UserName").place(x=10, y=10)
-    Label(win, text="Password").place(x=10, y=40)
+    Label(win, text="Sign In", font=("Arial", 20)).pack(pady=10)
+    
+    Label(win, text="User Name:").place(x=50, y=80)
+    un = Entry(win, width=30)
+    un.place(x=150, y=80)
+    
+    Label(win, text="Password:").place(x=50, y=120)
+    pw = Entry(win, show="*", width=30)
+    pw.place(x=150, y=120)
 
-    un = Entry(win)
-    un.place(x=140, y=10)
-    pw = Entry(win)
-    pw.place(x=140, y=40)
-    pw.config(show="*")
-
-    Button(win, text="Login", command=login, height=3, width=20).place(x=10, y=80)
-    Button(win, text="register", command=register, height=3, width=20).place(x=10, y=120)
+    Button(win, text="Log in", command=login, width=15).place(x=100, y=160)
+    Button(win, text="Register", command=register, width=15).place(x=200, y=160)
 
     win.mainloop()
 

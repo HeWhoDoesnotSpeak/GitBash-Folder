@@ -1,51 +1,73 @@
-# Register.py
 from tkinter import *
 from tkinter import messagebox
-import database
+from database import *
 
 def register():
-    username = un.get()
-    password = pw.get()
-    email = email_entry.get()
-    if not username or not password or not email:
-        print("All fields are required.")
-        return
-    # Ensure the table exists
-    database.createTable()
-    # Inserts user details
-    database.insertUser(username, password, email)
-    print(f"User {username} registered successfully!")
+    username = usernameEntry.get()
+    password = passwordEntry.get()
+    confirmPassword = confirmPasswordEntry.get()
+    email = emailEntry.get()
     
-    #Boolean check to see if the user has inputed their details and if not then the error would pop up
-    if username and password and email:
-        messagebox.showinfo("Registration", "Thank you for registering")
-        win.destroy()
-        loginPage()
-    else:
+    if not username or not password or not email:
         messagebox.showwarning("Input Error", "All fields are required")
+        return
+    
+    if password != confirmPassword:
+        messagebox.showwarning("Input Error", "Passwords do not match")
+        return
+
+    # Ensures the table exists
+    createTables()
+
+    # Checks if username already exists
+    if checkUserExists(username):
+        messagebox.showinfo("Error", "Username already exists. Please choose a different username.")
+        return
+
+    # Checks for username and password length
+    if len(username) < 5 or len(username) > 25:
+        messagebox.showinfo("Error", "Username must be between 5 and 25 characters")
+        return
+    elif len(password) < 5 or len(password) > 20:
+        messagebox.showinfo("Error", "Password must be between 5 and 20 characters")
+        return
+    
+    # Inserts the user's details
+    insertUser(username, password, email)
+    print(f"User {username} registered successfully!")
+    messagebox.showinfo("Registration", "Thank you for registering")
+    win.destroy()
+    loginPage()
 
 def loginPage():
     import loginPage
     loginPage.show()
 
 def show():
-    global win, un, pw, email_entry
+    global win, usernameEntry, passwordEntry, confirmPasswordEntry, emailEntry
     win = Tk()
     win.title("Register")
-    win.geometry("300x200")
+    win.geometry("400x400")  # I hate pixel positioning, pixel art is fun though
 
-    Label(win, text="UserName").place(x=10, y=10)
-    Label(win, text="Password").place(x=10, y=40)
-    Label(win, text="Email").place(x=10, y=70)
+    Label(win, text="Register", font=("Arial", 20)).pack(pady=10)
 
-    un = Entry(win)
-    un.place(x=140, y=10)
-    pw = Entry(win)
-    pw.place(x=140, y=40)
-    email_entry = Entry(win)
-    email_entry.place(x=140, y=70)
+    Label(win, text="Email:").place(x=50, y=100)
+    emailEntry = Entry(win, width=30)
+    emailEntry.place(x=150, y=100)
+    
+    Label(win, text="Username:").place(x=50, y=140)
+    usernameEntry = Entry(win, width=30)
+    usernameEntry.place(x=150, y=140)
+    
+    Label(win, text="Password:").place(x=50, y=180)
+    passwordEntry = Entry(win, show="*", width=30)
+    passwordEntry.place(x=150, y=180)
+    
+    Label(win, text="Confirm Password:").place(x=50, y=220)
+    confirmPasswordEntry = Entry(win, show="*", width=30)
+    confirmPasswordEntry.place(x=150, y=220)
 
-    Button(win, text="Register", command=register,height=3, width=20).place(x=10, y=120)
+    Button(win, text="Register", command=register, width=15).place(x=150, y=260)
 
     win.mainloop()
 
