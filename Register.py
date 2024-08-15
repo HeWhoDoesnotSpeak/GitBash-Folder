@@ -19,7 +19,7 @@ def register():
     # Ensures the table exists
     createTables()
 
-    # Checks if username already exists
+    # Checks if username already exists within the database using username as the search variable
     if checkUserExists(username):
         messagebox.showinfo("Error", "Username already exists. Please choose a different username.")
         return
@@ -32,7 +32,7 @@ def register():
         messagebox.showinfo("Error", "Password must be between 5 and 20 characters")
         return
     
-    # Inserts the user's details
+    # Inserts the user's details into the database with login details
     insertUser(username, password, email)
     print(f"User {username} registered successfully!")
     messagebox.showinfo("Registration", "Thank you for registering")
@@ -68,8 +68,6 @@ def show():
     confirmPasswordEntry.place(x=150, y=220)
 
     Button(win, text="Register", command=register, width=15).place(x=150, y=260)
-
-    win.mainloop()
 
 if __name__ == "__main__":
     show()

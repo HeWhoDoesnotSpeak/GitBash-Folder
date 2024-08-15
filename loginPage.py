@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import database
-from homePage import *
+import homePage
 
 # The function for login page
 def login():
@@ -17,7 +17,7 @@ def login():
         if user[1] == password:
             messagebox.showinfo("Login", "Login Success")
             win.destroy()
-            homePage()
+            homePage.show(username)  # Passes the username to homePage.show() with it being defined/ an instance of it making it not cause a error
         else:
             messagebox.showerror("Login Error", "Incorrect Password")
     else:
@@ -28,13 +28,9 @@ def login():
             messagebox.showerror("Login Error", "Incorrect Username and Password")
 
 # Page hopping stuff
-def homePage():
-    import homePage
-    homePage.show()
-
 def register():
-    win.destroy()
     import register
+    win.destroy()
     register.show()
 
 def show():

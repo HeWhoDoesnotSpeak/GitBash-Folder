@@ -1,9 +1,11 @@
 from fuzzywuzzy import process
 
-# Finds the best matches for the search term
+"""Finds the best matches for the search term using the fuzzy search alorightm in simple terms uses a score of displacement and 
+changes from letters and position to give a score which is then used for the function"""
+
 def findBestMatch(searchTerm, options, limit=10):
     if not options:
-        # When there are no options for searching
+        # When there are no options for searching which occurs when there are no articles to present
         print("No options available for searching.")
         return []
 

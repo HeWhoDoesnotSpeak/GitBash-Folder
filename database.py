@@ -19,21 +19,23 @@ def checkConnection(printFunction, messageFunction, printText, messageText):
 # Creates the necessary tables if they don't already exist
 def createTables():
     connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
     try:
         cursor = connection.cursor()
         cursor.execute("CREATE TABLE IF NOT EXISTS users (UserName TEXT PRIMARY KEY, Password TEXT, Email TEXT)")
         cursor.execute("CREATE TABLE IF NOT EXISTS articles (title TEXT PRIMARY KEY, content TEXT)")
-        cursor.execute("CREATE TABLE IF NOT EXISTS history (number INTEGER PRIMARY KEY, question TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS history (number INTEGER PRIMARY KEY AUTOINCREMENT, UserName TEXT, question TEXT, FOREIGN KEY(UserName) REFERENCES users(UserName))")
         connection.commit()
     except sqlite3.Error as e:
         print(f"An error occurred while creating tables: {e}")
-        messagebox.showerror("An error occured while creating tables.")
+        messagebox.showerror("Error", "An error occurred while creating tables.")
+    finally:
+        connection.close()
 
 # Inserts a new user into the database
 def insertUser(username, password, email):
     connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    checkConnection(print, messagebox.showerror, "Failed to connect to database","Failed to connect to the database")
     try:
         cursor = connection.cursor()
         cursor.execute("INSERT INTO users (UserName, Password, Email) VALUES (?, ?, ?)", (username, password, email))
@@ -48,7 +50,7 @@ def insertUser(username, password, email):
 # Retrieves a user by their username
 def getUser(username):
     connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    checkConnection(print, messagebox.showerror, "Failed to connect to database","Failed to connect to the database")
     try:
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users WHERE UserName=?", (username,))
@@ -130,32 +132,35 @@ def updateArticle(title, newContent):
     finally:
         connection.close()
 
-def saveSearchHistory(question):
+def saveSearchHistory(username, question):
     connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
     try:
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO history (question) VALUES (?)", (question,))
+        # Adjust column name to match the existing schema
+        cursor.execute("INSERT INTO history (username, question) VALUES (?, ?)", (username, question))
         connection.commit()
     except sqlite3.Error as e:
-        print(f"An error occured while tring to save the search history: {e}")
+        print(f"An error occurred while trying to save the search history: {e}")
     finally:
         connection.close()
 
-def getSearchHistory():
+def getSearchHistory(username):
     connection = getConnection()
     if connection is None:
         print("Failed to connect to the database.")
         return []
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM history ORDER BY number DESC")
+        # Adjust column name to match the existing schema
+        cursor.execute("SELECT * FROM history WHERE username=? ORDER BY number DESC", (username,))
         return cursor.fetchall()
     except sqlite3.Error as e:
         print(f"An error occurred while retrieving the search history: {e}")
         return []
     finally:
         connection.close()
+
 
 
 
