@@ -3,10 +3,10 @@ from tkinter import messagebox
 import database
 import homePage
 
-# The function for login page
+# The function for login page which includes entry inputs expections for errors, checkers for username and password.
 def login():
-    username = un.get()
-    password = pw.get()
+    username = un.get().strip()
+    password = pw.get().strip()
 
     if not username or not password:
         messagebox.showerror("Login Error", "No blanks allowed")
@@ -17,9 +17,11 @@ def login():
         if user[1] == password:
             messagebox.showinfo("Login", "Login Success")
             win.destroy()
-            homePage.show(username)  # Passes the username to homePage.show() with it being defined/ an instance of it making it not cause a error
+            # Passes the username to homePage.show()
+            homePage.show(username)  
         else:
             messagebox.showerror("Login Error", "Incorrect Password")
+    # Makes sure the username isn't already registered for a login
     else:
         allUsers = database.getAllUsers()
         if username not in [user[0] for user in allUsers]:
@@ -33,6 +35,7 @@ def register():
     win.destroy()
     register.show()
 
+# Label and button set up for with the window size and entry labels
 def show():
     global win, un, pw
     win = Tk()
@@ -53,6 +56,7 @@ def show():
     Button(win, text="Register", command=register, width=15).place(x=200, y=160)
 
     win.mainloop()
+    
 
 if __name__ == "__main__":
     show()

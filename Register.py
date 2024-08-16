@@ -3,15 +3,16 @@ from tkinter import messagebox
 from database import *
 
 def register():
-    username = usernameEntry.get()
-    password = passwordEntry.get()
-    confirmPassword = confirmPasswordEntry.get()
-    email = emailEntry.get()
-    
+    # Takes the user' sinputs as its information of the id and using confirmation to ensure that the username already doesn't exist and the passwords match
+    username = usernameEntry.get().strip()
+    password = passwordEntry.get().strip()
+    confirmPassword = confirmPasswordEntry.get().strip()
+    email = emailEntry.get().strip()
+
     if not username or not password or not email:
         messagebox.showwarning("Input Error", "All fields are required")
         return
-    
+
     if password != confirmPassword:
         messagebox.showwarning("Input Error", "Passwords do not match")
         return
@@ -39,15 +40,17 @@ def register():
     win.destroy()
     loginPage()
 
+# Acts as a page hopper function
 def loginPage():
     import loginPage
     loginPage.show()
 
+# Label set up of register with global variables and entry so that user input can be saved into the database
 def show():
     global win, usernameEntry, passwordEntry, confirmPasswordEntry, emailEntry
     win = Tk()
     win.title("Register")
-    win.geometry("400x400")  # I hate pixel positioning, pixel art is fun though
+    win.geometry("400x400")
 
     Label(win, text="Register", font=("Arial", 20)).pack(pady=10)
 
@@ -68,6 +71,8 @@ def show():
     confirmPasswordEntry.place(x=150, y=220)
 
     Button(win, text="Register", command=register, width=15).place(x=150, y=260)
+
+    win.mainloop()
 
 if __name__ == "__main__":
     show()

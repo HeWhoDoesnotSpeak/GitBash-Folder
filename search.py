@@ -1,18 +1,20 @@
 from fuzzywuzzy import process
 
-"""Finds the best matches for the search term using the fuzzy search alorightm in simple terms uses a score of displacement and 
-changes from letters and position to give a score which is then used for the function"""
+"""Finds the best matches for the search term using the fuzzy search algorithm.
+In simple terms, it uses a score based on displacement and changes in letters and position to give a score,
+which is then used for ranking the results."""
 
 def findBestMatch(searchTerm, options, limit=10):
     if not options:
-        # When there are no options for searching which occurs when there are no articles to present
+        # When there are no options for searching, which occurs when there are no articles to present
         print("No options available for searching.")
         return []
 
-    """Normalises/Lowercases the search term so that it can be string easier with article titles that are also lowercased, 
-    then with the extraction of searchTerms and options with the possible articles possible"""
+    """Normalises (lowercases) the search term so that it can be compared more easily with article titles
+    that are also lowercased, then performs the search using the search term and options."""
     searchTerm = searchTerm.lower()
 
+    # Extraction of the searchTerm which is the entry used, options in the articles and the limit
     try:
         results = process.extract(searchTerm, options, limit=limit)
     except Exception as e:
@@ -23,12 +25,12 @@ def findBestMatch(searchTerm, options, limit=10):
 
 # Wrapper for fuzzy search to return matches, which allows for the instance to be valid for return of results
 def fuzzySearch(searchTerm, options, limit=10):
-    # Validates the input for when the instance is called upon when the fuzzy search is utlised
+    # Validates the input types when the fuzzy search is utilised
     if not isinstance(searchTerm, str) or not isinstance(options, list):
         print("Invalid input types.")
-        # Reurns nothing as there is no valid input types that was inputted for it
+        # Returns nothing as the input types are not valid
         return []
 
-    # Results speaks for itself, it returns the results, which makes results equal to the best match with its question, articles, and limit
+    # Results contains the matches with their relevance scores
     results = findBestMatch(searchTerm, options, limit)
     return results

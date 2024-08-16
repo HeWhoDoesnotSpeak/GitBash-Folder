@@ -9,19 +9,23 @@ def getConnection():
         print(f"An error occurred while connecting to the database: {e}")
         return None
 
+# Checks if the database connection was successful and handles error messaging
 def checkConnection(printFunction, messageFunction, printText, messageText):
     connection = getConnection()
     if connection is None:
         printFunction(printText)
         messageFunction(messageText)
-        return
+        return None
+    return connection
 
 # Creates the necessary tables if they don't already exist
 def createTables():
-    connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    if connection is None:
+        return
     try:
         cursor = connection.cursor()
+        # Creates users, articles, and history tables if they don't already exist
         cursor.execute("CREATE TABLE IF NOT EXISTS users (UserName TEXT PRIMARY KEY, Password TEXT, Email TEXT)")
         cursor.execute("CREATE TABLE IF NOT EXISTS articles (title TEXT PRIMARY KEY, content TEXT)")
         cursor.execute("CREATE TABLE IF NOT EXISTS history (number INTEGER PRIMARY KEY AUTOINCREMENT, UserName TEXT, question TEXT, FOREIGN KEY(UserName) REFERENCES users(UserName))")
@@ -34,8 +38,9 @@ def createTables():
 
 # Inserts a new user into the database
 def insertUser(username, password, email):
-    connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to database","Failed to connect to the database")
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    if connection is None:
+        return
     try:
         cursor = connection.cursor()
         cursor.execute("INSERT INTO users (UserName, Password, Email) VALUES (?, ?, ?)", (username, password, email))
@@ -47,10 +52,11 @@ def insertUser(username, password, email):
     finally:
         connection.close()
 
-# Retrieves a user by their username
+# Retrieves a specific user by their username
 def getUser(username):
-    connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to database","Failed to connect to the database")
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    if connection is None:
+        return None
     try:
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM users WHERE UserName=?", (username,))
@@ -60,11 +66,10 @@ def getUser(username):
     finally:
         connection.close()
 
-# Retrieves all users from the database
+# Retrieves all users that are currently in the database
 def getAllUsers():
-    connection = getConnection()
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
     if connection is None:
-        print("Failed to connect to the database.")
         return []
     try:
         cursor = connection.cursor()
@@ -75,11 +80,10 @@ def getAllUsers():
     finally:
         connection.close()
 
-# Checks if a user exists by username by search the database with all usernames
+# Checks if a user exists by using the username within the database
 def checkUserExists(username):
-    connection = getConnection()
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
     if connection is None:
-        print("Failed to connect to the database.")
         return False
     try:
         cursor = connection.cursor()
@@ -92,8 +96,9 @@ def checkUserExists(username):
 
 # Inserts an article into the database
 def saveArticle(title, content):
-    connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to database","Failed to connect to the database")
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    if connection is None:
+        return
     try:
         cursor = connection.cursor()
         cursor.execute("INSERT INTO articles (title, content) VALUES (?, ?)", (title, content))
@@ -105,11 +110,10 @@ def saveArticle(title, content):
     finally:
         connection.close()
 
-# Retrieves all articles from the database
+# Retrieves all articles from the database to be displayed later
 def getAllArticles():
-    connection = getConnection()
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
     if connection is None:
-        print("Failed to connect to the database.")
         return []
     try:
         cursor = connection.cursor()
@@ -120,9 +124,11 @@ def getAllArticles():
     finally:
         connection.close()
 
+# Updates an existing article with new content that already exists in the database
 def updateArticle(title, newContent):
-    connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to databse","Failed to connect to the database")
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    if connection is None:
+        return
     try:
         cursor = connection.cursor()
         cursor.execute("UPDATE articles SET content=? WHERE title=?", (newContent, title))
@@ -132,28 +138,28 @@ def updateArticle(title, newContent):
     finally:
         connection.close()
 
+# Saves the search history entry for a user from the database that is currently logged in
 def saveSearchHistory(username, question):
-    connection = getConnection()
-    checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    if connection is None:
+        return
     try:
         cursor = connection.cursor()
-        # Adjust column name to match the existing schema
-        cursor.execute("INSERT INTO history (username, question) VALUES (?, ?)", (username, question))
+        cursor.execute("INSERT INTO history (UserName, question) VALUES (?, ?)", (username, question))
         connection.commit()
     except sqlite3.Error as e:
         print(f"An error occurred while trying to save the search history: {e}")
     finally:
         connection.close()
 
+# Retrieves the search history for a specific user that is chosen by the username in the database
 def getSearchHistory(username):
-    connection = getConnection()
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
     if connection is None:
-        print("Failed to connect to the database.")
         return []
     try:
         cursor = connection.cursor()
-        # Adjust column name to match the existing schema
-        cursor.execute("SELECT * FROM history WHERE username=? ORDER BY number DESC", (username,))
+        cursor.execute("SELECT * FROM history WHERE UserName=? ORDER BY number DESC", (username,))
         return cursor.fetchall()
     except sqlite3.Error as e:
         print(f"An error occurred while retrieving the search history: {e}")
@@ -161,6 +167,18 @@ def getSearchHistory(username):
     finally:
         connection.close()
 
-
-
-
+# Updates the password for a specific user
+def updateUserPassword(username, newPassword):
+    connection = checkConnection(print, messagebox.showerror, "Failed to connect to database", "Failed to connect to the database")
+    if connection is None:
+        return
+    try:
+        cursor = connection.cursor()
+        cursor.execute("UPDATE users SET Password=? WHERE UserName=?", (newPassword, username))
+        connection.commit()
+        if cursor.rowcount == 0:
+            print(f"No user found with username '{username}'")
+    except sqlite3.Error as e:
+        print(f"An error occurred while updating the password: {e}")
+    finally:
+        connection.close()
