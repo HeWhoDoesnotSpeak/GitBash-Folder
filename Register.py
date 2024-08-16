@@ -3,7 +3,7 @@ from tkinter import messagebox
 from database import *
 
 def register():
-    # Takes the user' sinputs as its information of the id and using confirmation to ensure that the username already doesn't exist and the passwords match
+    # Takes the user' sinputs as its information of the id and using confirmation to ensure that the username doesn't already exist and the passwords match
     username = usernameEntry.get().strip()
     password = passwordEntry.get().strip()
     confirmPassword = confirmPasswordEntry.get().strip()
